@@ -37,6 +37,7 @@ This project is built on **.NET 8.0** and uses the following libraries:
 
 | Package                                             | Requested Version | Resolved Version | Description |
 |-----------------------------------------------------|------------------|------------------|-------------|
+| **DotNetEnv**                                      | 3.1.1            | 3.1.1            | Load environment variables from `.env` files in .NET applications. |
 | **Microsoft.AspNetCore.Mvc.NewtonsoftJson**        | 8.0.5            | 8.0.5            | Support for `Newtonsoft.Json` in **ASP.NET Core MVC**. |
 | **Newtonsoft.Json**                                | 13.0.3           | 13.0.3           | JSON handling library for .NET. |
 | **NLog.Extensions.Logging**                        | 5.4.0            | 5.4.0            | Integration of **NLog** with the .NET logging system. |
@@ -44,6 +45,7 @@ This project is built on **.NET 8.0** and uses the following libraries:
 | **SkiaSharp.NativeAssets.Linux**                   | 3.116.1          | 3.116.1          | Native dependencies for **SkiaSharp** on Linux. |
 | **Swashbuckle.AspNetCore**                         | 8.0.0            | 8.0.0            | Tool for generating **Swagger** documentation in **ASP.NET Core**. |
 | **Syncfusion.EJ2.PdfViewer.AspNet.Core.Linux**     | 28.1.37          | 28.1.37          | **Syncfusion** PDF viewer for Linux in **ASP.NET Core**. |
+| **Syncfusion.Licensing**                            | 29.1.33          | 29.1.33          | **Syncfusion** licensing library for .NET applications. |
 | **Syncfusion.Pdf.Net.Core**                        | 29.1.33          | 29.1.33          | **Syncfusion** library for handling PDFs in .NET. |
 
 #### 🔍 Overview  

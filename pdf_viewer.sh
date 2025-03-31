@@ -19,28 +19,32 @@ read OPTION
 
 case $OPTION in
   1)
-      dotnet run
-      ;;
+    dotnet run
+    ;;
   2)
-      dotnet restore
-      ;;
+    dotnet restore
+    ;;
   3)
-      dotnet build
-      ;;
+    dotnet build
+    ;;
   4)
-      docker start pdf-viewer-app
-      ;;
+    docker start pdf-viewer-app
+    ;;
   5)
-      docker run -d --name pdf-viewer-app -p 3000:3000 pdf-viewer:latest
-      ;;
+    echo -n "Enter Syncfusion key: "
+    read SYNCFUSION_KEY
+    export SYNCFUSION_KEY
+    docker run -d --name pdf-viewer-app -p 3000:3000 -e SYNCFUSION_LICENSE_KEY=$SYNCFUSION_KEY pdf-viewer:latest
+
+    ;;
   6)
-      docker build -t pdf-viewer .
-      ;;
+    docker build -t pdf-viewer .
+    ;;
   7)
-      echo "Saliendo del script."
-      SALIR=1
-      ;;
+    echo "Saliendo del script."
+    SALIR=1
+    ;;
   *)
-      echo "Opción inválida"
-      ;;
+    echo "Opción inválida"
+    ;;
   esac

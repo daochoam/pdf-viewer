@@ -89,7 +89,7 @@
             Imports annotations from a file.
             </summary>
         </member>
-        <member name="M:ej2_pdfviewer_service.Controllers.PdfViewerController.GetStatus">
+        <member name="M:ej2_pdfviewer_service.Controllers.PdfViewerController.GetVersion">
             <summary>
             Checks the status of the API.
             </summary>

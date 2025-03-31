@@ -7,9 +7,20 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
 using Newtonsoft.Json.Serialization;
 using System.IO.Compression;
+using Syncfusion.Licensing;
+using DotNetEnv;
 
+// Cargar variables desde .env
+Env.Load();
 
 var builder = WebApplication.CreateBuilder(args);
+
+// Registrar la licencia de Syncfusion
+var licenseKey = Environment.GetEnvironmentVariable("SYNCFUSION_LICENSE_KEY");
+if (!string.IsNullOrEmpty(licenseKey))
+{
+    SyncfusionLicenseProvider.RegisterLicense(licenseKey);
+}
 
 // Configuración de servicios
 builder.Services.AddControllers().AddNewtonsoftJson(options =>
@@ -59,6 +70,27 @@ builder.Services.AddSwaggerGen(c =>
 builder.WebHost.ConfigureKestrel(options =>
 {
     options.Limits.MaxRequestBodySize = 50 * 1024 * 1024; // 50 MB
+    // Configura el puerto HTTP & HTTPS
+    if (int.TryParse(Environment.GetEnvironmentVariable("LISTEN_PORT"), out int port))
+    {
+        options.ListenLocalhost(port, listenOptions =>
+        {
+            listenOptions.UseHttps(httpsOptions =>
+            {
+                //httpsOptions.ServerCertificate = new X509Certificate2("certificado.pfx", "password");
+            });
+        });
+    }
+    else
+    {
+        options.ListenLocalhost(5000, listenOptions =>
+        {
+            listenOptions.UseHttps(httpsOptions =>
+            {
+                //httpsOptions.ServerCertificate = new X509Certificate2("certificado.pfx", "password");
+            });
+        });
+    }
 });
 
 var app = builder.Build();
@@ -77,6 +109,8 @@ if (app.Environment.IsDevelopment())
 }
 else
 {
+    app.UseHttpsRedirection(); 
+    app.UseExceptionHandler("/error");
     app.UseHsts();
 }
 

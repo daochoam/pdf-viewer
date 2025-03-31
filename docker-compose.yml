@@ -1,0 +1,14 @@
+version: '3.8'
+
+services:
+  pdf-viewer:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    env_file:
+      - .env
+    ports:
+      - "443:443"
+      - "8080:3000"
+    volumes:
+      - ./data:/app/data

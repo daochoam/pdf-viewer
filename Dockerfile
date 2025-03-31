@@ -14,11 +14,14 @@ WORKDIR /app
 # Configurar variables de entorno
 ENV ASPNETCORE_URLS=http://+:3000
 ENV DOCUMENT_SLIDING_EXPIRATION_TIME="10"
+ENV SYNCFUSION_LICENSE_KEY=""
 ENV REDIS_CACHE_CONNECTION_STRING=""
 ENV DOCUMENT_PATH=""
 
 # Exponer puertos HTTP
 EXPOSE 3000
+# Exponer puertos HTTPS
+EXPOSE 443
 
 # Imagen para compilación del proyecto
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build

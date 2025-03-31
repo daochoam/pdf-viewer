@@ -54,7 +54,7 @@ namespace ej2_pdfviewer_service.Controllers
 
           if (request != null && request.ContainsKey("document") && !string.IsNullOrEmpty(request["document"]))
           {
-              string? documentPath = request["document"];
+              string documentPath = request["document"] ?? string.Empty;
               if (request.ContainsKey("isFileName") && bool.TryParse(request["isFileName"], out bool isFileName) && isFileName)
               {
                   string path = GetDocumentPath(documentPath);
@@ -66,7 +66,7 @@ namespace ej2_pdfviewer_service.Controllers
                   else
                   {
                       // Check if it is a valid remote URL
-                      if (Uri.TryCreate(documentPath, UriKind.Absolute, out Uri uriResult) &&
+                      if (!string.IsNullOrEmpty(documentPath) && Uri.TryCreate(documentPath, UriKind.Absolute, out Uri uriResult) &&
                           (uriResult.Scheme == Uri.UriSchemeHttp || uriResult.Scheme == Uri.UriSchemeHttps))
                       {
                           try
@@ -325,13 +325,15 @@ namespace ej2_pdfviewer_service.Controllers
         /// Checks the status of the API.
         /// </summary>
         [AcceptVerbs("Get")]
-        [HttpGet("")]
+        [HttpGet("version")]
         [Microsoft.AspNetCore.Cors.EnableCors("MyPolicy")]
         [Route("[controller]/GetStatus")]
-        public IActionResult GetStatus()
+        public IActionResult GetVersion()
         {
-            return Ok("PDF Viewer API is running");
-        }
 
+            var pdfNetCoreVersion = typeof(Syncfusion.Pdf.PdfDocument).Assembly.GetName().Version?.ToString();
+            var syncfusionVersion = typeof(Syncfusion.EJ2.PdfViewer.PdfRenderer).Assembly.GetName().Version?.ToString();
+            return Ok($"PDF Viewer API is running Syncfusion version {pdfNetCoreVersion}.");
+        }
     }
 }
