@@ -41,7 +41,10 @@ namespace ej2_pdfviewer_service.Controllers
         /// </summary>
         /// <param name="request">Dictionary with the key "document" (Base64 or file name).</param>
         /// <returns>JSON with the details of the loaded document.</returns>
-        [HttpPost("load")]
+        [AcceptVerbs("Post")]
+        [HttpPost("Load")]
+        [Microsoft.AspNetCore.Cors.EnableCors("MyPolicy")]
+        [Route("[controller]/Load")]
         public async Task<IActionResult> Load([FromBody] Dictionary<string, string> request)
         {
           PdfRenderer pdfviewer = new PdfRenderer(_cache);
@@ -62,13 +65,13 @@ namespace ej2_pdfviewer_service.Controllers
                   }
                   else
                   {
-                      // Verifica si es una URL remota válida
+                      // Check if it is a valid remote URL
                       if (Uri.TryCreate(documentPath, UriKind.Absolute, out Uri uriResult) &&
                           (uriResult.Scheme == Uri.UriSchemeHttp || uriResult.Scheme == Uri.UriSchemeHttps))
                       {
                           try
                           {
-                              // Descarga el archivo desde la URL remota
+                              // Download the file from the remote URL
                               HttpClient client = new HttpClient();
                               byte[] pdfDoc = await client.GetByteArrayAsync(documentPath);
                               stream = new MemoryStream(pdfDoc);
@@ -97,7 +100,7 @@ namespace ej2_pdfviewer_service.Controllers
                   }
               }
 
-              // Asegúrate de que el stream no esté vacío antes de almacenarlo en la caché
+              // Ensure the stream is not empty before storing it in the cache
               if (stream.Length > 0)
               {
                   _cache.Set(cacheKey, stream.ToArray(), TimeSpan.FromMinutes(10));
@@ -114,7 +117,7 @@ namespace ej2_pdfviewer_service.Controllers
 
           request["document"] = cacheKey;
 
-          // Asegúrate de que el stream no sea nulo antes de llamar al método Load
+          // Ensure the stream is not null before calling the Load method
           if (stream.Length == 0)
           {
                 return BadRequest("Error: The file does not contain any data.");
@@ -124,9 +127,69 @@ namespace ej2_pdfviewer_service.Controllers
         }
 
         /// <summary>
-        /// Obtiene los marcadores de un documento PDF.
+        /// Unloads the PDF document and clears the cache.
         /// </summary>
-        [HttpPost("bookmarks")]
+        [AcceptVerbs("Post")]
+        [HttpPost("Unload")]
+        [Microsoft.AspNetCore.Cors.EnableCors("MyPolicy")]
+        [Route("[controller]/Unload")]
+        public IActionResult Unload([FromBody] Dictionary<string, string> request)
+        {
+            //Initialize the PDF Viewer object with memory cache object
+            PdfRenderer pdfviewer = new PdfRenderer(_cache);
+            pdfviewer.ClearCache(request);
+            return this.Content("Document cache is cleared");
+        }
+
+        /// <summary>
+        /// Downloads the PDF document as a Base64 string.
+        /// </summary>
+        /// <param name="request">Dictionary with the key "document" (Base64 or file name).</param>
+        /// <returns>Base64 string of the PDF document.</returns>
+        /// <remarks>
+        /// This method is used to download the PDF document as a Base64 string.
+        /// The document can be either a file name or a Base64 string.
+        /// </remarks>
+        [AcceptVerbs("Post")]
+        [HttpPost("Download")]
+        [Microsoft.AspNetCore.Cors.EnableCors("MyPolicy")]
+        [Route("[controller]/Download")]
+        public IActionResult Download([FromBody] Dictionary<string, string> request)
+        {
+            //Initialize the PDF Viewer object with memory cache object
+            PdfRenderer pdfviewer = new PdfRenderer(_cache);
+            string documentBase = pdfviewer.GetDocumentAsBase64(request);
+            return Content(documentBase);
+        }
+        
+        /// <summary>
+        /// Prints the PDF document and returns the print images.
+        /// </summary>
+        /// <param name="request">Dictionary with the key "document" (Base64 or file name).</param>
+        /// <returns>Base64 string of the print images.</returns>
+        /// <remarks>
+        /// This method is used to print the PDF document.
+        /// The document can be either a file name or a Base64 string.
+        /// </remarks>
+        [AcceptVerbs("Post")]
+        [HttpPost("PrintImages")]
+        [Microsoft.AspNetCore.Cors.EnableCors("MyPolicy")]
+        [Route("[controller]/PrintImages")]
+        public IActionResult PrintImages([FromBody] Dictionary<string, string> request)
+        {
+            //Initialize the PDF Viewer object with memory cache object
+            PdfRenderer pdfviewer = new PdfRenderer(_cache);
+            object pageImage = pdfviewer.GetPrintImage(request);
+            return Content(JsonConvert.SerializeObject(pageImage));
+        }
+
+        /// <summary>
+        /// Retrieves the bookmarks of a PDF document.
+        /// </summary>
+        [AcceptVerbs("Post")]
+        [HttpPost("Bookmarks")]
+        [Microsoft.AspNetCore.Cors.EnableCors("MyPolicy")]
+        [Route("[controller]/Bookmarks")]
         public IActionResult Bookmarks([FromBody] Dictionary<string, string> request)
         {
             PdfRenderer pdfviewer = new PdfRenderer(_cache);
@@ -135,9 +198,12 @@ namespace ej2_pdfviewer_service.Controllers
         }
 
         /// <summary>
-        /// Renderiza las páginas de un PDF.
+        /// Renders the pages of a PDF.
         /// </summary>
-        [HttpPost("render-pages")]
+        [AcceptVerbs("Post")]
+        [HttpPost("RenderPdfPages")]
+        [Microsoft.AspNetCore.Cors.EnableCors("MyPolicy")]
+        [Route("[controller]/RenderPdfPages")]
         public IActionResult RenderPdfPages([FromBody] Dictionary<string, string> request)
         {
           try
@@ -157,9 +223,32 @@ namespace ej2_pdfviewer_service.Controllers
         }
 
         /// <summary>
-        /// Obtiene miniaturas de las páginas del PDF.
+        /// Renders the text of a PDF.
         /// </summary>
-        [HttpPost("thumbnails")]
+        /// <remarks>
+        /// This method is used to render the text of a PDF document.
+        /// The document can be either a file name or a Base64 string.
+        /// </remarks>
+        [AcceptVerbs("Post")]
+        [HttpPost("RenderPdfTexts")]
+        [Microsoft.AspNetCore.Cors.EnableCors("MyPolicy")]
+        [Route("[controller]/RenderPdfTexts")]
+        //Post action for processing the PDF texts  
+        public IActionResult RenderPdfTexts([FromBody] Dictionary<string, string> request)
+        {
+            //Initialize the PDF Viewer object with memory cache object
+            PdfRenderer pdfviewer = new PdfRenderer(_cache);
+            object jsonResult = pdfviewer.GetDocumentText(request);
+            return Content(JsonConvert.SerializeObject(jsonResult));
+        }
+
+        /// <summary>
+        /// Retrieves thumbnails of the PDF pages.
+        /// </summary>
+        [AcceptVerbs("Post")]
+        [HttpPost("RenderThumbnailImages")]
+        [Microsoft.AspNetCore.Cors.EnableCors("MyPolicy")]
+        [Route("[controller]/RenderThumbnailImages")]
         public IActionResult RenderThumbnailImages([FromBody] Dictionary<string, string> request)
         {
             PdfRenderer pdfviewer = new PdfRenderer(_cache);
@@ -168,9 +257,12 @@ namespace ej2_pdfviewer_service.Controllers
         }
 
         /// <summary>
-        /// Obtiene comentarios de anotaciones en un PDF.
+        /// Retrieves annotation comments from a PDF.
         /// </summary>
-        [HttpPost("annotations")]
+        [AcceptVerbs("Post")]
+        [HttpPost("RenderAnnotationComments")]
+        [Microsoft.AspNetCore.Cors.EnableCors("MyPolicy")]
+        [Route("[controller]/RenderAnnotationComments")]
         public IActionResult RenderAnnotationComments([FromBody] Dictionary<string, string> request)
         {
             PdfRenderer pdfviewer = new PdfRenderer(_cache);
@@ -179,9 +271,11 @@ namespace ej2_pdfviewer_service.Controllers
         }
 
         /// <summary>
-        /// Exporta anotaciones de un PDF.
+        /// Exports annotations from a PDF.
         /// </summary>
-        [HttpPost("export-annotations")]
+        [AcceptVerbs("Post")]
+        [HttpPost("ExportAnnotations")]
+        [Microsoft.AspNetCore.Cors.EnableCors("MyPolicy")]
         [Route("[controller]/ExportAnnotations")]
         public IActionResult ExportAnnotations([FromBody] Dictionary<string, string> request)
         {
@@ -189,9 +283,11 @@ namespace ej2_pdfviewer_service.Controllers
         }
 
         /// <summary>
-        /// Importa anotaciones de un archivo.
+        /// Imports annotations from a file.
         /// </summary>
-        [HttpPost("import-annotations")]
+        [AcceptVerbs("Post")]
+        [HttpPost("ImportAnnotations")]
+        [Route("[controller]/ImportAnnotations")]
         public IActionResult ImportAnnotations([FromBody] Dictionary<string, string> request)
         {
             if (request != null && request.ContainsKey("fileName"))
@@ -203,10 +299,10 @@ namespace ej2_pdfviewer_service.Controllers
                 }
                 else
                 {
-                    return NotFound("Archivo no encontrado");
+                    return NotFound("File not found");
                 }
             }
-            return BadRequest("Error: No se proporcionó un archivo válido.");
+            return BadRequest("Error: No valid file was provided.");
         }
 
         private string GetDocumentPath(string document)
@@ -226,9 +322,12 @@ namespace ej2_pdfviewer_service.Controllers
         }
 
         /// <summary>
-        /// Verifica el estado de la API.
+        /// Checks the status of the API.
         /// </summary>
-        [HttpGet]
+        [AcceptVerbs("Get")]
+        [HttpGet("")]
+        [Microsoft.AspNetCore.Cors.EnableCors("MyPolicy")]
+        [Route("[controller]/GetStatus")]
         public IActionResult GetStatus()
         {
             return Ok("PDF Viewer API is running");

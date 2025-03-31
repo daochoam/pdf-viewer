@@ -23,39 +23,75 @@
             <param name="request">Dictionary with the key "document" (Base64 or file name).</param>
             <returns>JSON with the details of the loaded document.</returns>
         </member>
+        <member name="M:ej2_pdfviewer_service.Controllers.PdfViewerController.Unload(System.Collections.Generic.Dictionary{System.String,System.String})">
+            <summary>
+            Unloads the PDF document and clears the cache.
+            </summary>
+        </member>
+        <member name="M:ej2_pdfviewer_service.Controllers.PdfViewerController.Download(System.Collections.Generic.Dictionary{System.String,System.String})">
+            <summary>
+            Downloads the PDF document as a Base64 string.
+            </summary>
+            <param name="request">Dictionary with the key "document" (Base64 or file name).</param>
+            <returns>Base64 string of the PDF document.</returns>
+            <remarks>
+            This method is used to download the PDF document as a Base64 string.
+            The document can be either a file name or a Base64 string.
+            </remarks>
+        </member>
+        <member name="M:ej2_pdfviewer_service.Controllers.PdfViewerController.PrintImages(System.Collections.Generic.Dictionary{System.String,System.String})">
+            <summary>
+            Prints the PDF document and returns the print images.
+            </summary>
+            <param name="request">Dictionary with the key "document" (Base64 or file name).</param>
+            <returns>Base64 string of the print images.</returns>
+            <remarks>
+            This method is used to print the PDF document.
+            The document can be either a file name or a Base64 string.
+            </remarks>
+        </member>
         <member name="M:ej2_pdfviewer_service.Controllers.PdfViewerController.Bookmarks(System.Collections.Generic.Dictionary{System.String,System.String})">
             <summary>
-            Obtiene los marcadores de un documento PDF.
+            Retrieves the bookmarks of a PDF document.
             </summary>
         </member>
         <member name="M:ej2_pdfviewer_service.Controllers.PdfViewerController.RenderPdfPages(System.Collections.Generic.Dictionary{System.String,System.String})">
             <summary>
-            Renderiza las páginas de un PDF.
+            Renders the pages of a PDF.
             </summary>
+        </member>
+        <member name="M:ej2_pdfviewer_service.Controllers.PdfViewerController.RenderPdfTexts(System.Collections.Generic.Dictionary{System.String,System.String})">
+            <summary>
+            Renders the text of a PDF.
+            </summary>
+            <remarks>
+            This method is used to render the text of a PDF document.
+            The document can be either a file name or a Base64 string.
+            </remarks>
         </member>
         <member name="M:ej2_pdfviewer_service.Controllers.PdfViewerController.RenderThumbnailImages(System.Collections.Generic.Dictionary{System.String,System.String})">
             <summary>
-            Obtiene miniaturas de las páginas del PDF.
+            Retrieves thumbnails of the PDF pages.
             </summary>
         </member>
         <member name="M:ej2_pdfviewer_service.Controllers.PdfViewerController.RenderAnnotationComments(System.Collections.Generic.Dictionary{System.String,System.String})">
             <summary>
-            Obtiene comentarios de anotaciones en un PDF.
+            Retrieves annotation comments from a PDF.
             </summary>
         </member>
         <member name="M:ej2_pdfviewer_service.Controllers.PdfViewerController.ExportAnnotations(System.Collections.Generic.Dictionary{System.String,System.String})">
             <summary>
-            Exporta anotaciones de un PDF.
+            Exports annotations from a PDF.
             </summary>
         </member>
         <member name="M:ej2_pdfviewer_service.Controllers.PdfViewerController.ImportAnnotations(System.Collections.Generic.Dictionary{System.String,System.String})">
             <summary>
-            Importa anotaciones de un archivo.
+            Imports annotations from a file.
             </summary>
         </member>
         <member name="M:ej2_pdfviewer_service.Controllers.PdfViewerController.GetStatus">
             <summary>
-            Verifica el estado de la API.
+            Checks the status of the API.
             </summary>
         </member>
         <member name="T:pdf_viewer.Pages.ErrorModel">
