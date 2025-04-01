@@ -11,31 +11,42 @@
 ## Description
 This project is a backend implementation for the Syncfusion PDF Viewer. It provides APIs to handle PDF rendering, text extraction, and other functionalities required for seamless PDF viewing. The backend is designed to integrate with the Syncfusion PDF Viewer component, enabling features like annotation, form filling, and text search.
 
+- **Syncfusion Libraries**:
+  - **PDF** (`Syncfusion.Pdf.Net.Core`) - PDF generation and manipulation.
+  - **PDF Viewer** (`Syncfusion.EJ2.PdfViewer.AspNet.Core.Linux`) - PDF viewer for Linux.
+
 ## Prerequisites for .NET
 
 Before proceeding with the installation, ensure you have the following prerequisites installed on your system:
 
 1. **.NET SDK**: Download and install the latest version of the .NET SDK from the [official .NET website](https://dotnet.microsoft.com/download).
 2. **Git**: Ensure Git is installed to clone the repository. You can download it from [Git's official website](https://git-scm.com/).
-3. **Node.js and npm** (if required for frontend integration): Download and install from the [Node.js website](https://nodejs.org/).
-4. **Database** (if applicable): Ensure the required database (e.g., SQL Server, PostgreSQL) is installed and properly configured.
-5. **Docker** (optional): If you plan to use Docker, ensure Docker is installed and running on your system. You can download it from [Docker's official website](https://www.docker.com/).
+3. **Docker** (optional): If you plan to use Docker, ensure Docker is installed and running on your system. You can download it from [Docker's official website](https://www.docker.com/).
 
 Verify the installation by running the following commands:
 
 ```bash
 dotnet --version
 git --version
-node --version
-npm --version
 docker --version
 ```
-## 📄 Libraries:  
-This project is built on **.NET 8.0** and uses the following libraries:  
 
-#### 📦 Installed Packages  
+## 📌 Technologies
+  - **ASP.NET Core** - Development of APIs and web services.
+  - **Swagger (OpenAPI)** - API documentation and testing.
+  - **SkiaSharp** - High-performance graphics engine.
+  - **Syncfusion Libraries**:
+    - **PDF** (`Syncfusion.Pdf.Net.Core`) - PDF generation and manipulation.
+    - **PDF Viewer** (`Syncfusion.EJ2.PdfViewer.AspNet.Core.Linux`) - PDF viewer for Linux.
+  - **Newtonsoft.Json** - JSON data serialization and deserialization.
+  - **DotNetEnv** - Loads environment variables from `.env` files.
+  
 
-| Package                                             | Requested Version | Resolved Version | Description |
+## 📄 Installed Packages:  
+This project is built on **.NET 8.0** and uses the following packages:  
+  
+
+| 📦 Package                                             | Requested Version | Resolved Version | Description |
 |-----------------------------------------------------|------------------|------------------|-------------|
 | **DotNetEnv**                                      | 3.1.1            | 3.1.1            | Load environment variables from `.env` files in .NET applications. |
 | **Microsoft.AspNetCore.Mvc.NewtonsoftJson**        | 8.0.5            | 8.0.5            | Support for `Newtonsoft.Json` in **ASP.NET Core MVC**. |
@@ -48,19 +59,27 @@ This project is built on **.NET 8.0** and uses the following libraries:
 | **Syncfusion.Licensing**                            | 29.1.33          | 29.1.33          | **Syncfusion** licensing library for .NET applications. |
 | **Syncfusion.Pdf.Net.Core**                        | 29.1.33          | 29.1.33          | **Syncfusion** library for handling PDFs in .NET. |
 
-#### 🔍 Overview  
-The **pdf-viewer** project integrates **ASP.NET Core**, **Syncfusion**, **SkiaSharp**, and **Swagger** to handle and display PDF files. It also uses **NLog** for logging and **Newtonsoft.Json** for JSON manipulation.  
 
-**Technologies:**  
+## 🌐 Environment Variables
 
-```markdown
-- ASP.NET Core MVC  
-- Syncfusion PDF Viewer  
-- SkiaSharp for graphics  
-- Swagger for documentation  
-- NLog for logging  
+To configure the project, you need to create a `.env` file in the root directory with the following variables:
+
+```plaintext
+LISTEN_PORT=
+ASPNETCORE_ENVIRONMENT=
+CERTIFICATE_PATH=
+CERTIFICATE_PASSWORD=
+SYNCFUSION_LICENSE_KEY=
 ```
 
+#### Explanation of Variables:
+- **LISTEN_PORT**: The port on which the application will listen (default is `5000`).
+- **ASPNETCORE_ENVIRONMENT**: Specifies the environment for the application (e.g., `development`, `production`).
+- **CERTIFICATE_PATH**: Path to the SSL certificate file.
+- **CERTIFICATE_PASSWORD**: Password for the SSL certificate.
+- **SYNCFUSION_LICENSE_KEY**: License key for Syncfusion libraries.
+
+Ensure the `.env` file is not committed to version control by adding it to your `.gitignore` file.
 
 ## 🛠️ Installation and Execution
 Clone the repository:
@@ -130,12 +149,12 @@ This issue is typically caused by a missing `pdfium` dependency in the environme
 
   ```markdown
   1. Create a symbolic link for the missing library:
-      sudo ln -s /usr/lib64/libdl.so.2 /usr/lib64/libdl.so
+      # sudo ln -s /usr/lib64/libdl.so.2 /usr/lib64/libdl.so
   2. Install the required dependencies:
-    # Fix for Debian-based Systems:
-      sudo apt-get update
-      sudo apt install libgdiplus
-    # Fix for Fedora-based Systems:
-      sudo dnf update
-      sudo dnf install libgdiplus
+     Fix for Debian-based Systems:
+      # sudo apt-get update
+      # sudo apt install libgdiplus
+     Fix for Fedora-based Systems:
+      # sudo dnf update
+      # sudo dnf install libgdiplus
   ```

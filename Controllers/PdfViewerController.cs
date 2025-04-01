@@ -66,8 +66,8 @@ namespace ej2_pdfviewer_service.Controllers
                   else
                   {
                       // Check if it is a valid remote URL
-                      if (!string.IsNullOrEmpty(documentPath) && Uri.TryCreate(documentPath, UriKind.Absolute, out Uri uriResult) &&
-                          (uriResult.Scheme == Uri.UriSchemeHttp || uriResult.Scheme == Uri.UriSchemeHttps))
+                      if (!string.IsNullOrEmpty(documentPath) && Uri.TryCreate(documentPath, UriKind.Absolute, out Uri? uriResult) &&
+                          (uriResult?.Scheme == Uri.UriSchemeHttp || uriResult?.Scheme == Uri.UriSchemeHttps))
                       {
                           try
                           {
@@ -218,7 +218,7 @@ namespace ej2_pdfviewer_service.Controllers
           }
           catch (Exception ex)
           {
-                return BadRequest($"Error processing the PDF: {ex.Message}\n{ex.StackTrace}");
+            return BadRequest($"Error processing the PDF: {ex.Message}\n{ex.StackTrace}");
           }
         }
 
@@ -233,8 +233,7 @@ namespace ej2_pdfviewer_service.Controllers
         [HttpPost("RenderPdfTexts")]
         [Microsoft.AspNetCore.Cors.EnableCors("MyPolicy")]
         [Route("[controller]/RenderPdfTexts")]
-        //Post action for processing the PDF texts  
-        public IActionResult RenderPdfTexts([FromBody] Dictionary<string, string> request)
+        public IActionResult RenderPdfTexts([FromBody] Dictionary<string, string> request)
         {
             //Initialize the PDF Viewer object with memory cache object
             PdfRenderer pdfviewer = new PdfRenderer(_cache);

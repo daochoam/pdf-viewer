@@ -1,3 +1,4 @@
+using DotNetEnv;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
@@ -8,7 +9,7 @@ using Microsoft.OpenApi.Models;
 using Newtonsoft.Json.Serialization;
 using System.IO.Compression;
 using Syncfusion.Licensing;
-using DotNetEnv;
+using System.Security.Cryptography.X509Certificates;
 
 // Cargar variables desde .env
 Env.Load();
@@ -70,14 +71,37 @@ builder.Services.AddSwaggerGen(c =>
 builder.WebHost.ConfigureKestrel(options =>
 {
     options.Limits.MaxRequestBodySize = 50 * 1024 * 1024; // 50 MB
-    // Configura el puerto HTTP & HTTPS
-    if (int.TryParse(Environment.GetEnvironmentVariable("LISTEN_PORT"), out int port))
+
+    // Verificar el entorno
+    var environment = (Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") ?? "development").ToLower();
+    var PORT = int.TryParse(Environment.GetEnvironmentVariable("LISTEN_PORT"), out var port) ? port : 5000;
+    var certificatePath = Environment.GetEnvironmentVariable("CERTIFICATE_PATH");
+    if (string.IsNullOrEmpty(certificatePath))
     {
-        options.ListenLocalhost(port, listenOptions =>
+        certificatePath = Directory.GetFiles(AppContext.BaseDirectory, "*.pfx").FirstOrDefault();
+        if (certificatePath != null)
+        {
+            Environment.SetEnvironmentVariable("CERTIFICATE_PATH", certificatePath);
+        }
+    }
+
+    if (environment == "development" && !string.IsNullOrEmpty(certificatePath))
+    {
+        options.ListenLocalhost(PORT, listenOptions =>
         {
             listenOptions.UseHttps(httpsOptions =>
             {
-                //httpsOptions.ServerCertificate = new X509Certificate2("certificado.pfx", "password");
+                httpsOptions.ServerCertificate = new X509Certificate2(certificatePath,Environment.GetEnvironmentVariable("CERTIFICATE_PASSWORD"));
+            });
+        });
+    }
+    else if (environment == "production" && !string.IsNullOrEmpty(certificatePath))
+    {
+        options.ListenLocalhost(443, listenOptions =>
+        {
+            listenOptions.UseHttps(httpsOptions =>
+            {
+                httpsOptions.ServerCertificate = new X509Certificate2(certificatePath,Environment.GetEnvironmentVariable("CERTIFICATE_PASSWORD"));
             });
         });
     }
@@ -85,10 +109,7 @@ builder.WebHost.ConfigureKestrel(options =>
     {
         options.ListenLocalhost(5000, listenOptions =>
         {
-            listenOptions.UseHttps(httpsOptions =>
-            {
-                //httpsOptions.ServerCertificate = new X509Certificate2("certificado.pfx", "password");
-            });
+            listenOptions.UseHttps();
         });
     }
 });
@@ -102,7 +123,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI(c =>
     {
         c.SwaggerEndpoint("/swagger/v1/swagger.json", "PDF Viewer API v1");
-        c.RoutePrefix = string.Empty; // Acceder a Swagger en la raíz (`/`)
+        c.RoutePrefix = string.Empty;
     });
 
     app.UseDeveloperExceptionPage();

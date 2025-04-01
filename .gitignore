@@ -103,6 +103,9 @@ StyleCopReport.xml
 *.pidb
 *.svclog
 *.scc
+*.crt
+*.key
+*.pfx
 
 # Chutzpah Test files
 _Chutzpah*
@@ -112,7 +115,7 @@ ipch/
 *.aps
 *.ncb
 *.opendb
-*.opensdf
+*.opensdf/run/media/daniel_8a/NEUMAN/rino-syncfusion/certificates
 *.sdf
 *.cachefile
 *.VC.db
@@ -256,6 +259,9 @@ orleans.codegen.cs
 
 # RIA/Silverlight projects
 Generated_Code/
+
+# certificiates
+certificiates
 
 # Backup & report files from converting an old project file
 # to a newer Visual Studio version. Backup files are not needed,
@@ -482,3 +488,6 @@ $RECYCLE.BIN/
 
 # Vim temporary swap files
 *.swp
+
+# certificate folder
+certificates
