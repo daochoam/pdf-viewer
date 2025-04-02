@@ -4,31 +4,31 @@
         <name>pdf-viewer</name>
     </assembly>
     <members>
-        <member name="T:ej2_pdfviewer_service.Controllers.PdfViewerController">
+        <member name="T:EJ2PdfViewerServer.Controllers.PdfViewerController">
             <summary>
             Controlador para manejar la visualización de documentos PDF.
             </summary>
         </member>
-        <member name="M:ej2_pdfviewer_service.Controllers.PdfViewerController.#ctor(Microsoft.AspNetCore.Hosting.IWebHostEnvironment,Microsoft.Extensions.Caching.Memory.IMemoryCache)">
+        <member name="M:EJ2PdfViewerServer.Controllers.PdfViewerController.#ctor(Microsoft.AspNetCore.Hosting.IWebHostEnvironment,Microsoft.Extensions.Caching.Memory.IMemoryCache)">
             <summary>
             Constructor del controlador PDF Viewer.
             </summary>
             <param name="hostingEnvironment">Interfaz del entorno de alojamiento web.</param>
             <param name="cache">Instancia de caché en memoria.</param>
         </member>
-        <member name="M:ej2_pdfviewer_service.Controllers.PdfViewerController.Load(System.Collections.Generic.Dictionary{System.String,System.String})">
+        <member name="M:EJ2PdfViewerServer.Controllers.PdfViewerController.Load(System.Collections.Generic.Dictionary{System.String,System.String})">
             <summary>
             Loads a PDF document into the viewer.
             </summary>
             <param name="request">Dictionary with the key "document" (Base64 or file name).</param>
             <returns>JSON with the details of the loaded document.</returns>
         </member>
-        <member name="M:ej2_pdfviewer_service.Controllers.PdfViewerController.Unload(System.Collections.Generic.Dictionary{System.String,System.String})">
+        <member name="M:EJ2PdfViewerServer.Controllers.PdfViewerController.Unload(System.Collections.Generic.Dictionary{System.String,System.String})">
             <summary>
             Unloads the PDF document and clears the cache.
             </summary>
         </member>
-        <member name="M:ej2_pdfviewer_service.Controllers.PdfViewerController.Download(System.Collections.Generic.Dictionary{System.String,System.String})">
+        <member name="M:EJ2PdfViewerServer.Controllers.PdfViewerController.Download(System.Collections.Generic.Dictionary{System.String,System.String})">
             <summary>
             Downloads the PDF document as a Base64 string.
             </summary>
@@ -39,7 +39,7 @@
             The document can be either a file name or a Base64 string.
             </remarks>
         </member>
-        <member name="M:ej2_pdfviewer_service.Controllers.PdfViewerController.PrintImages(System.Collections.Generic.Dictionary{System.String,System.String})">
+        <member name="M:EJ2PdfViewerServer.Controllers.PdfViewerController.PrintImages(System.Collections.Generic.Dictionary{System.String,System.String})">
             <summary>
             Prints the PDF document and returns the print images.
             </summary>
@@ -50,17 +50,17 @@
             The document can be either a file name or a Base64 string.
             </remarks>
         </member>
-        <member name="M:ej2_pdfviewer_service.Controllers.PdfViewerController.Bookmarks(System.Collections.Generic.Dictionary{System.String,System.String})">
+        <member name="M:EJ2PdfViewerServer.Controllers.PdfViewerController.Bookmarks(System.Collections.Generic.Dictionary{System.String,System.String})">
             <summary>
             Retrieves the bookmarks of a PDF document.
             </summary>
         </member>
-        <member name="M:ej2_pdfviewer_service.Controllers.PdfViewerController.RenderPdfPages(System.Collections.Generic.Dictionary{System.String,System.String})">
+        <member name="M:EJ2PdfViewerServer.Controllers.PdfViewerController.RenderPdfPages(System.Collections.Generic.Dictionary{System.String,System.String})">
             <summary>
             Renders the pages of a PDF.
             </summary>
         </member>
-        <member name="M:ej2_pdfviewer_service.Controllers.PdfViewerController.RenderPdfTexts(System.Collections.Generic.Dictionary{System.String,System.String})">
+        <member name="M:EJ2PdfViewerServer.Controllers.PdfViewerController.RenderPdfTexts(System.Collections.Generic.Dictionary{System.String,System.String})">
             <summary>
             Renders the text of a PDF.
             </summary>
@@ -69,95 +69,29 @@
             The document can be either a file name or a Base64 string.
             </remarks>
         </member>
-        <member name="M:ej2_pdfviewer_service.Controllers.PdfViewerController.RenderThumbnailImages(System.Collections.Generic.Dictionary{System.String,System.String})">
+        <member name="M:EJ2PdfViewerServer.Controllers.PdfViewerController.RenderThumbnailImages(System.Collections.Generic.Dictionary{System.String,System.String})">
             <summary>
             Retrieves thumbnails of the PDF pages.
             </summary>
         </member>
-        <member name="M:ej2_pdfviewer_service.Controllers.PdfViewerController.RenderAnnotationComments(System.Collections.Generic.Dictionary{System.String,System.String})">
+        <member name="M:EJ2PdfViewerServer.Controllers.PdfViewerController.RenderAnnotationComments(System.Collections.Generic.Dictionary{System.String,System.String})">
             <summary>
             Retrieves annotation comments from a PDF.
             </summary>
         </member>
-        <member name="M:ej2_pdfviewer_service.Controllers.PdfViewerController.ExportAnnotations(System.Collections.Generic.Dictionary{System.String,System.String})">
+        <member name="M:EJ2PdfViewerServer.Controllers.PdfViewerController.ExportAnnotations(System.Collections.Generic.Dictionary{System.String,System.String})">
             <summary>
             Exports annotations from a PDF.
             </summary>
         </member>
-        <member name="M:ej2_pdfviewer_service.Controllers.PdfViewerController.ImportAnnotations(System.Collections.Generic.Dictionary{System.String,System.String})">
+        <member name="M:EJ2PdfViewerServer.Controllers.PdfViewerController.ImportAnnotations(System.Collections.Generic.Dictionary{System.String,System.String})">
             <summary>
             Imports annotations from a file.
             </summary>
         </member>
-        <member name="M:ej2_pdfviewer_service.Controllers.PdfViewerController.GetVersion">
+        <member name="M:EJ2PdfViewerServer.Controllers.PdfViewerController.GetVersion">
             <summary>
             Checks the status of the API.
-            </summary>
-        </member>
-        <member name="T:pdf_viewer.Pages.ErrorModel">
-            <summary>
-            Error model to capture information about failed requests.
-            </summary>
-        </member>
-        <member name="P:pdf_viewer.Pages.ErrorModel.RequestId">
-            <summary>
-            Unique identifier for the request.
-            </summary>
-        </member>
-        <member name="P:pdf_viewer.Pages.ErrorModel.ShowRequestId">
-            <summary>
-            Indicates whether the RequestId should be displayed.
-            </summary>
-        </member>
-        <member name="M:pdf_viewer.Pages.ErrorModel.#ctor(Microsoft.Extensions.Logging.ILogger{pdf_viewer.Pages.ErrorModel})">
-            <summary>
-            Error model constructor.
-            </summary>
-            <param name="logger">Instancia del registrador de logs.</param>
-        </member>
-        <member name="M:pdf_viewer.Pages.ErrorModel.OnGet">
-            <summary>
-            Handles the GET request for the error page.
-            </summary>
-        </member>
-        <member name="T:pdf_viewer.Pages.IndexModel">
-            <summary>
-            Index model for the main page of the PDF viewer application.
-            </summary>
-        </member>
-        <member name="F:pdf_viewer.Pages.IndexModel._logger">
-            <summary>
-            Unique identifier for the request.
-            </summary>
-        </member>
-        <member name="M:pdf_viewer.Pages.IndexModel.#ctor(Microsoft.Extensions.Logging.ILogger{pdf_viewer.Pages.IndexModel})">
-            <summary>
-            Index model constructor.
-            </summary>
-        </member>
-        <member name="M:pdf_viewer.Pages.IndexModel.OnGet">
-            <summary>
-            Handles the GET request for the index page.
-            </summary>
-        </member>
-        <member name="T:pdf_viewer.Pages.PrivacyModel">
-            <summary>
-            Privacy model to capture information about privacy policy.
-            </summary>
-        </member>
-        <member name="F:pdf_viewer.Pages.PrivacyModel._logger">
-            <summary>
-            Unique identifier for the request.
-            </summary>
-        </member>
-        <member name="M:pdf_viewer.Pages.PrivacyModel.#ctor(Microsoft.Extensions.Logging.ILogger{pdf_viewer.Pages.PrivacyModel})">
-            <summary>
-            Indicates whether the RequestId should be displayed.
-            </summary>
-        </member>
-        <member name="M:pdf_viewer.Pages.PrivacyModel.OnGet">
-            <summary>
-            Handles the GET request for the privacy page.
             </summary>
         </member>
     </members>
