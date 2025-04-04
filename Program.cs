@@ -73,44 +73,24 @@ builder.WebHost.ConfigureKestrel(options =>
     options.Limits.MaxRequestBodySize = 50 * 1024 * 1024; // 50 MB
 
     // Verificar el entorno
-    var environment = (Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") ?? "development").ToLower();
-    var PORT = int.TryParse(Environment.GetEnvironmentVariable("LISTEN_PORT"), out var port) ? port : 5000;
-    var certificatePath = Environment.GetEnvironmentVariable("CERTIFICATE_PATH");
-    if (string.IsNullOrEmpty(certificatePath))
-    {
-        certificatePath = Directory.GetFiles(AppContext.BaseDirectory, "*.pfx").FirstOrDefault();
-        if (certificatePath != null)
-        {
-            Environment.SetEnvironmentVariable("CERTIFICATE_PATH", certificatePath);
-        }
-    }
+    var PORT = int.TryParse(Environment.GetEnvironmentVariable("LISTEN_PORT"), out var port) ? port : 8080;
+    var certificatePath = Environment.GetEnvironmentVariable("CERTIFICATE_PATH")?? null;
+    var certificatePassword = Environment.GetEnvironmentVariable("CERTIFICATE_PASSWORD") ?? null;
 
-    if (environment == "development" && !string.IsNullOrEmpty(certificatePath))
+    if (!string.IsNullOrEmpty(certificatePath) && !string.IsNullOrEmpty(certificatePassword) && File.Exists(certificatePath))
     {
-        options.ListenLocalhost(PORT, listenOptions =>
+        options.ListenAnyIP(PORT);
+        options.ListenAnyIP(PORT+1, listenOptions =>
         {
             listenOptions.UseHttps(httpsOptions =>
             {
-                httpsOptions.ServerCertificate = new X509Certificate2(certificatePath,Environment.GetEnvironmentVariable("CERTIFICATE_PASSWORD"));
-            });
-        });
-    }
-    else if (environment == "production" && !string.IsNullOrEmpty(certificatePath))
-    {
-        options.ListenLocalhost(443, listenOptions =>
-        {
-            listenOptions.UseHttps(httpsOptions =>
-            {
-                httpsOptions.ServerCertificate = new X509Certificate2(certificatePath,Environment.GetEnvironmentVariable("CERTIFICATE_PASSWORD"));
+                httpsOptions.ServerCertificate = new X509Certificate2(certificatePath,certificatePassword);
             });
         });
     }
     else
     {
-        options.ListenLocalhost(5000, listenOptions =>
-        {
-            listenOptions.UseHttps();
-        });
+        options.ListenAnyIP(PORT);
     }
 });
 

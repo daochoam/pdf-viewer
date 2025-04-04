@@ -5,7 +5,8 @@
 <a href="https://www.gnu.org/software/bash/" target="_blank"><img style="margin: 10px" src="https://raw.githubusercontent.com/daochoam/Data-Bases/7ebf3b247ec2a05d050ed0f1af37e7accac58a57/icons/bash.svg" alt="bash" height="50" /></a>
 <a href="https://dotnet.microsoft.com/" target="_blank"><img style="margin: 10px" src="https://raw.githubusercontent.com/daochoam/Data-Bases/7ebf3b247ec2a05d050ed0f1af37e7accac58a57/icons/dotnet.svg" alt="dotnet" height="50" /></a>  
 <a href="https://www.syncfusion.com/" target="_blank"><img style="margin: 10px" src="https://raw.githubusercontent.com/daochoam/Data-Bases/refs/heads/main/icons/Syncfusion.png" alt="syncfusion" height="50" /></a>
-<a href="https://www.docker.com/" target="_blank"><img style="margin: 10px" src="https://raw.githubusercontent.com/daochoam/Data-Bases/7ebf3b247ec2a05d050ed0f1af37e7accac58a57/icons/docker.svg" alt="docker" height="50" /></a>  
+<a href="https://www.docker.com/" target="_blank"><img style="margin: 10px" src="https://raw.githubusercontent.com/daochoam/Data-Bases/7ebf3b247ec2a05d050ed0f1af37e7accac58a57/icons/docker.svg" alt="docker" height="50" /></a> 
+<a href="https://docs.docker.com/compose/" target="_blank"><img style="margin: 10px" src="https://raw.githubusercontent.com/daochoam/Data-Bases/refs/heads/main/icons/dockerCompose.png" alt="docker" height="50" /></a>  
 </div>
 
 ## Description
@@ -22,25 +23,16 @@ Before proceeding with the installation, ensure you have the following prerequis
 1. **.NET SDK**: Download and install the latest version of the .NET SDK from the [official .NET website](https://dotnet.microsoft.com/download).
 2. **Git**: Ensure Git is installed to clone the repository. You can download it from [Git's official website](https://git-scm.com/).
 3. **Docker** (optional): If you plan to use Docker, ensure Docker is installed and running on your system. You can download it from [Docker's official website](https://www.docker.com/).
+5. **Docker Compose**: If you plan to use Docker Compose, ensure it is installed. You can download it from [Docker Compose's official documentation](https://docs.docker.com/compose/install/).
 
 Verify the installation by running the following commands:
 
 ```bash
 dotnet --version
 git --version
-docker --version
+docker version
+docker compose version
 ```
-
-## 📌 Technologies
-  - **ASP.NET Core** - Development of APIs and web services.
-  - **Swagger (OpenAPI)** - API documentation and testing.
-  - **SkiaSharp** - High-performance graphics engine.
-  - **Syncfusion Libraries**:
-    - **PDF** (`Syncfusion.Pdf.Net.Core`) - PDF generation and manipulation.
-    - **PDF Viewer** (`Syncfusion.EJ2.PdfViewer.AspNet.Core.Linux`) - PDF viewer for Linux.
-  - **Newtonsoft.Json** - JSON data serialization and deserialization.
-  - **DotNetEnv** - Loads environment variables from `.env` files.
-  
 
 ## 📄 Installed Packages:  
 This project is built on **.NET 8.0** and uses the following packages:  
@@ -73,11 +65,15 @@ SYNCFUSION_LICENSE_KEY=
 ```
 
 #### Explanation of Variables:
-- **LISTEN_PORT**: The port on which the application will listen (default is `5000`).
-- **ASPNETCORE_ENVIRONMENT**: Specifies the environment for the application (e.g., `development`, `production`).
-- **CERTIFICATE_PATH**: Path to the SSL certificate file.
-- **CERTIFICATE_PASSWORD**: Password for the SSL certificate.
-- **SYNCFUSION_LICENSE_KEY**: License key for Syncfusion libraries.
+- **LISTEN_PORT** (optional): The port on which the application will listen (default is `8080`).
+- **ASPNETCORE_ENVIRONMENT** (optional): Specifies the environment for the application (e.g., `development`, `production`), (default is `development`).
+- **CERTIFICATE_PATH** (optional): Path to the SSL certificate file (used for `.pfx` files).
+- **CERTIFICATE_PASSWORD** (optional): Password for the SSL certificate. Required if **CERTIFICATE_PATH** is provided.
+- **SYNCFUSION_LICENSE_KEY** (optional): License key for Syncfusion libraries.
+
+#### ⚙️ Mandatory `.env` Configuration for Docker
+
+The `.env` file is **mandatory** for the correct execution of the `docker-compose` and `Dockerfile`. Ensure that all required environment variables are properly defined in the `.env` file before building or running the Docker containers.
 
 Ensure the `.env` file is not committed to version control by adding it to your `.gitignore` file.
 
@@ -96,9 +92,9 @@ Clone the repository:
   ```bash
     dotnet run
   ```
-  3. The project will be available on port `5000`. You can access the API at the following URL:
+  3. Once the containers are running, access the API at the default port `8080` or the port specified in the environment variable `LISTEN_PORT`:
   ```
-    http://localhost:5000/api/pdf-viewer
+    http://localhost:<LISTEN_PORT>/api/pdf-viewer
   ```
   
 #### Using `pdf_viewer.sh`
@@ -126,8 +122,10 @@ Follow these steps to set up the project using dotnet:
 
   1. To restore the project, select option **2** from the menu. This will restore the project to its initial state, ensuring all dependencies and configurations are properly set up.
   2. To run the project, select option **1** from the menu. Alternatively, you can execute the following command in the console:
-  3. The project will be publishing on port `5000`. You can access the API at `http://localhost:5000/api/pdf-viewer`.
-
+  3. The project will be publishing on port `8080` or the port specified in the environment variable `LISTEN_PORT`:
+  ```
+    http://localhost:<LISTEN_PORT>/api/pdf-viewer
+  ```
 
 ##### Using docker
 Follow these steps to set up the project using docker:
@@ -135,7 +133,22 @@ Follow these steps to set up the project using docker:
   1. To create the container image, select option **6** from the menu. This will build the Docker image required for the project.
   2. To configure and run the container, select option  **5**  from the menu. This will start the container with the necessary configurations for the project.
   3. If you need to initialize the container, select option **4** from the menu. This will prepare the container for use.
-  4. The container will be publishing on port `3000`. You can access the API at `http://localhost:3000/api/pdf-viewer`.
+  4. The container will be publishing on port `8080` or the port specified in the environment variable `LISTEN_PORT`:   
+  ```
+    http://localhost:<LISTEN_PORT>/api/pdf-viewer
+  ```
+
+#### Using docker-compose
+
+  1. Create a `.env` file in the root directory with the required variables as described in the **Environment Variables** section.
+  2. Execute the following command to start the development environment:
+  ```bash
+    docker compose --profile development up
+  ```
+  3. Once the containers are running, access the API at the default port `8080` or the port specified in the environment variable `LISTEN_PORT`:
+  ```
+    http://localhost:<LISTEN_PORT>/api/pdf-viewer
+  ```
 
 ### ⚠️ Troubleshooting PdfViewer.PdfiumNative Error
 

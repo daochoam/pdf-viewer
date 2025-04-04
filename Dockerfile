@@ -1,62 +1,59 @@
-# Imagen base para ejecución con dependencias necesarias
+# Base image for runtime with necessary dependencies (Debian)
 FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS base
 
-# Solucionar problemas con librerías faltantes
-RUN ln -s /lib/x86_64-linux-gnu/libdl.so.2 /lib/x86_64-linux-gnu/libdl.so
+# Install dependencies on Debian
+RUN apt-get update && apt-get install -y \
+    libgdiplus \
+    libc6-dev \
+    libx11-dev \
+    && ln -s /lib/x86_64-linux-gnu/libdl.so.2 /lib/x86_64-linux-gnu/libdl.so \
+    && ln -s libgdiplus.so gdiplus.dll 
 
-# Instalar dependencias para System.Drawing
-RUN apt-get update && apt-get install -y --allow-unauthenticated libgdiplus libc6-dev libx11-dev
-RUN ln -s libgdiplus.so gdiplus.dll
-
-# Configurar directorio de trabajo
+# Set working directory
 WORKDIR /app
 
-# Configurar variables de entorno
-ENV ASPNETCORE_URLS=http://+:3000
-ENV DOCUMENT_SLIDING_EXPIRATION_TIME="10"
-ENV SYNCFUSION_LICENSE_KEY=""
-ENV REDIS_CACHE_CONNECTION_STRING=""
-ENV DOCUMENT_PATH=""
+# Define listening port
+ARG LISTEN_PORT=8080
+EXPOSE ${LISTEN_PORT}
 
-# Exponer puertos HTTP
-EXPOSE 3000
-# Exponer puertos HTTPS
-EXPOSE 443
+# Image for project build (Alpine)
+FROM mcr.microsoft.com/dotnet/sdk:8.0-alpine AS build
 
-# Imagen para compilación del proyecto
-FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
-
-# Establecer directorio de trabajo
+# Set working directory
 WORKDIR /src
 
-# Copiar y restaurar dependencias
-COPY ["pdf-viewer.csproj", "./"]
+# Environment variables
+ENV LISTEN_PORT=$LISTEN_PORT
+ENV ASPNETCORE_ENVIRONMENT=$ASPNETCORE_ENVIRONMENT
+ENV SYNCFUSION_LICENSE_KEY=$SYNCFUSION_LICENSE_KEY
 
+# Copy and restore dependencies
+COPY ["pdf_viewer.csproj", "./"]
 
-# Instalar dependencias
-RUN dotnet restore "./pdf-viewer.csproj"
+# Install dependencies
+RUN dotnet restore "./pdf_viewer.csproj"
 
-# Verificar dependencias instaladas
-RUN dotnet list "./pdf-viewer.csproj" package
+# Verify installed dependencies
+RUN dotnet list "./pdf_viewer.csproj" package
 
-# Copiar el código fuente
+# Copy source code
 COPY . .
 
-# Construir el proyecto
+# Build the project
 RUN dotnet build -c Release -o /app
 
-# Publicar la aplicación
+# Publish the application
 FROM build AS publish
 RUN dotnet publish -c Release -o /app
 
-# Imagen final con el código publicado
+# Final image with published code (Debian)
 FROM base AS final
 
-# Definir directorio de trabajo
+# Set working directory
 WORKDIR /app
 
-# Copiar archivos de la etapa de publicación
+# Copy files from the publish stage
 COPY --from=publish /app .
 
-# Definir el punto de entrada
-ENTRYPOINT ["dotnet", "/app/pdf-viewer.dll"]
+# Define entry point
+ENTRYPOINT ["dotnet", "/app/pdf_viewer.dll"]

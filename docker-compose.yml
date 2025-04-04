@@ -1,34 +1,28 @@
 services:
-  development:
+  syncfusion:
     build:
       context: .
       dockerfile: Dockerfile
-    ports:
-      - "3000:5000"
-    env_file:
-      - .env
     environment:
-      - LISTEN_PORT=${LISTEN_PORT}
-      - ASPNETCORE_ENVIRONMENT=development
-      - SYNCFUSION_LICENSE_KEY=${SYNCFUSION_LICENSE_KEY}
-    working_dir: /app
-    command: ["dotnet", "run"]
+      LISTEN_PORT: ${LISTEN_PORT}
+      ASPNETCORE_ENVIRONMENT: "Development"
+      ASPNETCORE_URLS: "http://0.0.0.0:${LISTEN_PORT:-8080}"
+      SYNCFUSION_LICENSE_KEY: ${SYNCFUSION_LICENSE_KEY}
+    ports:
+      - "${LISTEN_PORT:-8080}:${LISTEN_PORT:-8080}"
     profiles:
       - development
-
+  
   production:
     build:
       context: .
       dockerfile: Dockerfile
-    ports:
-      - "4000:5000" # Changed port to avoid conflict
-    env_file:
-      - .env
     environment:
-      - LISTEN_PORT=${LISTEN_PORT}
-      - ASPNETCORE_ENVIRONMENT=production
-      - SYNCFUSION_LICENSE_KEY=${SYNCFUSION_LICENSE_KEY}
-    working_dir: /app/publish
-    command: ["dotnet", "rino-syncfusion.dll"] # Ensure this matches your entry point
+      LISTEN_PORT: ${LISTEN_PORT}
+      ASPNETCORE_ENVIRONMENT: "Production"
+      ASPNETCORE_URLS: "http://0.0.0.0:${LISTEN_PORT:-8080}"
+      SYNCFUSION_LICENSE_KEY: ${SYNCFUSION_LICENSE_KEY}
+    ports:
+      - "${LISTEN_PORT:-8080}:${LISTEN_PORT:-8080}"
     profiles:
       - production
