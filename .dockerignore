@@ -1,0 +1,32 @@
+# Archivos y carpetas de sistema
+bin/
+obj/
+*.user
+*.vs
+.vscode/
+.idea/
+*.suo
+*.ncrunchsolution
+*.cache
+*.log
+
+# Archivos de dependencias y compilación
+node_modules/
+packages/
+dist/
+.vs/
+
+# Configuraciones de entorno
+.env
+appsettings.Development.json
+appsettings.Local.json
+secrets.json
+
+# Archivos de Git y Docker
+.git/
+.gitignore
+.dockerignore
+
+# Otros archivos innecesarios
+Thumbs.db
+Desktop.ini
