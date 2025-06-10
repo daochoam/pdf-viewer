@@ -35,7 +35,7 @@ docker compose version
 ```
 
 ## 📄 Installed Packages:  
-This project is built on **.NET 8.0** and uses the following packages:  
+This project is built on **.NET 9.0** and uses the following packages:  
   
 
 | 📦 Package                                             | Requested Version | Resolved Version | Description |

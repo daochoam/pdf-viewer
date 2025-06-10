@@ -70,21 +70,22 @@ builder.Services.AddSwaggerGen(c =>
 // Configuración de Kestrel para archivos grandes
 builder.WebHost.ConfigureKestrel(options =>
 {
-    options.Limits.MaxRequestBodySize = 50 * 1024 * 1024; // 50 MB
-
     // Verificar el entorno
+    var SIZE = int.TryParse(Environment.GetEnvironmentVariable("SIZE"), out var size) ? size : 50; // 50 MB
     var PORT = int.TryParse(Environment.GetEnvironmentVariable("LISTEN_PORT"), out var port) ? port : 8080;
     var certificatePath = Environment.GetEnvironmentVariable("CERTIFICATE_PATH")?? null;
     var certificatePassword = Environment.GetEnvironmentVariable("CERTIFICATE_PASSWORD") ?? null;
 
+    options.Limits.MaxRequestBodySize = SIZE * 1024 * 1024; // 50 MB
+
     if (!string.IsNullOrEmpty(certificatePath) && !string.IsNullOrEmpty(certificatePassword) && File.Exists(certificatePath))
     {
         options.ListenAnyIP(PORT);
-        options.ListenAnyIP(PORT+1, listenOptions =>
+        options.ListenAnyIP(PORT + 1, listenOptions =>
         {
             listenOptions.UseHttps(httpsOptions =>
             {
-                httpsOptions.ServerCertificate = new X509Certificate2(certificatePath,certificatePassword);
+                httpsOptions.ServerCertificate = new X509Certificate2(certificatePath, certificatePassword);
             });
         });
     }

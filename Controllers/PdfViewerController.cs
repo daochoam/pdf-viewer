@@ -46,82 +46,122 @@ namespace EJ2PdfViewerServer.Controllers
         [Route("Load")]
         public async Task<IActionResult> Load([FromBody] Dictionary<string, string> request)
         {
-          PdfRenderer pdfviewer = new PdfRenderer(_cache);
-          MemoryStream stream = new MemoryStream();
-          object jsonResult;
-          string cacheKey = Guid.NewGuid().ToString();
+            PdfRenderer pdfviewer = new(_cache);
+            MemoryStream stream = new();
+            
+            if (request == null)
+                return BadRequest("Error: The request is empty.");
 
-          if (request != null && request.ContainsKey("document") && !string.IsNullOrEmpty(request["document"]))
-          {
-              string documentPath = request["document"] ?? string.Empty;
-              if (request.ContainsKey("isFileName") && bool.TryParse(request["isFileName"], out bool isFileName) && isFileName)
-              {
-                  string path = GetDocumentPath(documentPath);
-                  if (!string.IsNullOrEmpty(path))
-                  {
-                      byte[] bytes = System.IO.File.ReadAllBytes(path);
-                      stream = new MemoryStream(bytes);
-                  }
-                  else
-                  {
-                      // Check if it is a valid remote URL
-                      if (!string.IsNullOrEmpty(documentPath) && Uri.TryCreate(documentPath, UriKind.Absolute, out Uri? uriResult) &&
-                          (uriResult?.Scheme == Uri.UriSchemeHttp || uriResult?.Scheme == Uri.UriSchemeHttps)){
-                          try
-                          {
-                              // Download the file from the remote URL
-                              HttpClient client = new HttpClient();
-                              byte[] pdfDoc = await client.GetByteArrayAsync(documentPath);
-                              stream = new MemoryStream(pdfDoc);
-                          }
-                          catch (Exception ex)
-                          {
-                                return BadRequest("Error downloading the document from the URL: " + ex.Message);
-                          }
-                      }
-                      else
-                      {
-                            return BadRequest("Error: The document path is not valid.");
-                      }
-                  }
-              }
-              else
-              {
-                  try
-                  {
-                      byte[] bytes = Convert.FromBase64String(documentPath);
-                      stream = new MemoryStream(bytes);
-                  }
-                  catch (FormatException ex)
-                  {
-                        return BadRequest("Error: The document is not a valid Base64 string. " + ex.Message);
-                  }
-              }
+            // 1. Verificar si se solicitó por hashId (respuesta procesada en caché)
+            if (request.TryGetValue("hashId", out string? hashId) && !string.IsNullOrWhiteSpace(hashId))
+            {
 
-              // Ensure the stream is not empty before storing it in the cache
-              if (stream.Length > 0)
-              {
-                  _cache.Set(cacheKey, stream.ToArray(), TimeSpan.FromMinutes(10));
-              }
-              else
-              {
-                    return BadRequest("Error: The document does not contain any data.");
-              }
-          }
-          else
-          {
-                return BadRequest("Error: No valid document was received.");
-          }
+                if (_cache.TryGetValue(hashId!, out object? cachedResult))
+                {
+                    Console.WriteLine($"♻️ Content stored with hashId: {hashId}");
+                    if (cachedResult is MemoryStream cachedStream)
+                    {
+                        var jsonResult = pdfviewer.Load(cachedStream, request);
+                        return Ok(jsonResult);
+                    }
+                    else if (cachedResult is string cachedString)
+                    {
+                        var jsonResult = pdfviewer.Load(cachedString, request);
+                        return Ok(jsonResult);
+                    }
+                    else
+                    {
+                        return BadRequest("Error: The cached data type is not supported.");
+                    }
+                }
+            }
 
-          request["document"] = cacheKey;
+            if (request != null && request.ContainsKey("document") && !string.IsNullOrEmpty(request["document"]))
+            {
+                string documentPath = request["document"] ?? string.Empty;
+                if (request.ContainsKey("isFileName") && bool.TryParse(request["isFileName"], out bool isFileName) && isFileName)
+                {
+                    string path = GetDocumentPath(documentPath);
+                    if (!string.IsNullOrEmpty(path))
+                    {
+                        byte[] bytes = System.IO.File.ReadAllBytes(path);
+                        stream = new MemoryStream(bytes);
+                    }
+                    else
+                    {
+                        // Check if it is a valid remote URL
+                        if (!string.IsNullOrEmpty(documentPath) && Uri.TryCreate(documentPath, UriKind.Absolute, out Uri? uriResult) &&
+                            (uriResult?.Scheme == Uri.UriSchemeHttp || uriResult?.Scheme == Uri.UriSchemeHttps)){
+                            try
+                            {
+                                // Download the file from the remote URL
+                                HttpClient client = new HttpClient();
+                                byte[] pdfDoc = await client.GetByteArrayAsync(documentPath);
+                                stream = new MemoryStream(pdfDoc);
+                            }
+                            catch (Exception ex)
+                            {
+                                    return BadRequest("Error downloading the document from the URL: " + ex.Message);
+                            }
+                        }
+                        else
+                        {
+                                return BadRequest("Error: The document path is not valid.");
+                        }
+                    }
+                }
+                else
+                {
+                    try
+                    {
+                        byte[] bytes = Convert.FromBase64String(documentPath);
+                        stream = new MemoryStream(bytes);
+                    }
+                    catch (FormatException ex)
+                    {
+                            return BadRequest("Error: The document is not a valid Base64 string. " + ex.Message);
+                    }
+                }
 
-          // Ensure the stream is not null before calling the Load method
-          if (stream.Length == 0)
-          {
-                return BadRequest("Error: The file does not contain any data.");
-          }
-          jsonResult = pdfviewer.Load(stream, request);
-          return Ok(jsonResult);
+                if (stream.Length > 0)
+                {
+                    try
+                        {
+                            var jsonResult = pdfviewer.Load(stream, request);
+                            string hash_id;
+
+                                var prop = jsonResult.GetType().GetProperty("hashId");
+                                if (prop != null)
+                                {
+                                    object? value = prop.GetValue(jsonResult);
+                                    hash_id = value?.ToString() ?? Guid.NewGuid().ToString();
+
+                                    // Almacenar en caché
+                                    _cache.Set(hash_id, stream, TimeSpan.FromMinutes(10));
+                                    Console.WriteLine($"♻️ Storing content with hashId {hash_id}");
+                                }
+                                else
+                                {
+                                    hash_id = Guid.NewGuid().ToString();
+                                    Console.WriteLine("⚠️ Property 'hashId' not found, a new one was generated.");
+                                }
+
+                                return Ok(jsonResult);
+                        }
+                        catch (Exception ex)
+                        {
+                            return BadRequest("❌ Error processing the PDF document: " + ex.Message);
+                        }
+                }
+                else
+                {
+                        return BadRequest("Error: The document does not contain any data.");
+                }
+            }
+            else
+            {
+                    return BadRequest("Error: No valid document was received.");
+            }
         }
 
         /// <summary>
